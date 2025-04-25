@@ -43,6 +43,34 @@ const randomjokes = () => {
   return jokes[Math.floor(Math.random() * jokes.length)];
 };
 
+//Utility: Help
+const helpMe = () => {
+  const help = [
+        "How can I assist you today?",
+        "Of course! What do you need help with today?"
+        "What do you need help with?",
+        "I'm here to help. What can I do for you?",
+        "Tell me what you need, and I'll assist you.",
+        "Sure! What would you like help with?",
+        "Feel free to ask me anything!",
+        "How can I make your day easier?",
+        "What can I do to help you right now?",
+        "I'm ready to assist! What's your request?",
+        "I'm at your service. What can I help you with?",
+        "What can I do for you today?",
+        "Tell me how I can assist you.",
+        "Need help with something? Let me know!",
+        "I'm here for you—what do you need help with?",
+        "How can I support you today?",
+        "What can I assist you with right now?",
+        "Let me know how I can make things better for you!",
+        "I'm ready to lend a hand. What do you need?",
+        "You’ve got my attention. What do you need help with?",
+        "I’m ready to solve any problem you have. What’s up?"
+  ];
+  return help[Math.floor(Math.random() * help.length)];
+};
+
 // Utility: Speak text
 const speakMessage = (message) => {
   const synth = window.speechSynthesis;
@@ -158,6 +186,15 @@ function takeCommand(message) {
   ) {
     const jokeReply = randomjokes();
     typeMessage(jokeReply);
+  } else if (
+    message.includes("help me") ||
+    message.includes("help") ||
+    message.includes("i am in trouble") ||
+    message.includes("solve") ||
+    message.includes("can you help me")
+  ) {
+    const helpRequest = helpMe();
+    typeMessage(helpMe);
   } else if (message.includes("open youtube")) {
     window.open("https://youtube.com", "_blank");
     typeMessage("Opening Youtube...");
