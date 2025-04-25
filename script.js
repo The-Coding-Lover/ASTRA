@@ -194,7 +194,7 @@ function takeCommand(message) {
     message.includes("can you help me")
   ) {
     const helpRequest = helpMe();
-    typeMessage(helpMe);
+    typeMessage(helpRequest);
   } else if (message.includes("open youtube")) {
     window.open("https://youtube.com", "_blank");
     typeMessage("Opening Youtube...");
