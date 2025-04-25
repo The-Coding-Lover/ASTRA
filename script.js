@@ -47,7 +47,7 @@ const randomjokes = () => {
 const helpMe = () => {
   const help = [
         "How can I assist you today?",
-        "Of course! What do you need help with today?"
+        "Of course! What do you need help with today?",
         "What do you need help with?",
         "I'm here to help. What can I do for you?",
         "Tell me what you need, and I'll assist you.",
