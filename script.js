@@ -10,7 +10,8 @@ const thankYouReply = () => {
     "Happy to help!",
     "Anytime! Let me know if you need anything else.",
     "Glad I could assist you!",
-    "It's my pleasure!"
+    "It's my pleasure!",
+    "You're most welcome! If you need anything else, I am always here to help."
   ];
   return responses[Math.floor(Math.random() * responses.length)];
 };
@@ -155,7 +156,7 @@ function takeCommand(message) {
     message.includes("entertain me") ||
     message.includes("make me laugh")
   ) {
-    const jokeReply = randomjoke();
+    const jokeReply = randomjokes();
     typeMessage(jokeReply);
   } else if (message.includes("open youtube")) {
     window.open("https://youtube.com", "_blank");
