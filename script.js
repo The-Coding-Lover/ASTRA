@@ -72,6 +72,7 @@ const helpMe = () => {
 };
 
 //Utility: Manual unit conversion
+// Function to perform unit conversions
 function convertUnits(value, fromUnit, toUnit) {
     // Length conversion (e.g., meters to kilometers, inches to centimeters)
     const lengthConversions = {
@@ -114,14 +115,60 @@ function convertUnits(value, fromUnit, toUnit) {
     }
 }
 
-// Example usage:
-//console.log(convertUnits(100, 'meters', 'kilometers'));  // 100 meters to kilometers
-//console.log(convertUnits(32, 'Fahrenheit', 'Celsius')); // 32 Fahrenheit to Celsius
+// Function to perform currency conversions (this is a mock-up, replace with actual conversion API)
+async function convertCurrency(value, fromCurrency, toCurrency) {
+    // Example mock conversion rates, replace with actual API call or logic.
+    const conversionRates = {
+        "USD_TO_EUR": 0.85,
+        "EUR_TO_USD": 1.18
+    };
 
+    const conversionKey = `${fromCurrency}_TO_${toCurrency}`;
+    const rate = conversionRates[conversionKey];
+
+    if (rate) {
+        const result = value * rate;
+        return `${value} ${fromCurrency} is equal to ${result.toFixed(2)} ${toCurrency}.`;
+    } else {
+        return "Sorry, I couldn't perform the currency conversion. Please check the currencies and try again.";
+    }
+}
+
+// Function to extract conversion details from the message
+function extractConversionDetails(message) {
+    // Unit conversion pattern
+    const unitConversionPattern = /convert (\d+\.?\d*) (\w+) to (\w+)/i;
+    const currencyConversionPattern = /convert (\d+\.?\d*) (\w{3}) to (\w{3})/i;
+
+    let match;
+    
+    // Try to match a unit conversion
+    if ((match = message.match(unitConversionPattern))) {
+        return {
+            type: 'unit',
+            value: parseFloat(match[1]),
+            fromUnit: match[2].toLowerCase(),
+            toUnit: match[3].toLowerCase()
+        };
+    }
+    // Try to match a currency conversion
+    else if ((match = message.match(currencyConversionPattern))) {
+        return {
+            type: 'currency',
+            value: parseFloat(match[1]),
+            fromUnit: match[2].toUpperCase(),
+            toUnit: match[3].toUpperCase()
+        };
+    }
+
+    return null;  // If no match, return null
+}
+
+// Function to perform the conversion based on type (currency or unit)
 async function performConversion(type, value, fromUnit, toUnit) {
     if (type === 'currency') {
-        // Call the currency conversion function (assuming it's asynchronous)
-        return await convertCurrency(value, fromUnit, toUnit); // Ensure you have this function defined elsewhere.
+        // Call the currency conversion function
+        return await convertCurrency(value, fromUnit, toUnit);
     } else if (type === 'unit') {
         // Call the unit conversion function
         return convertUnits(value, fromUnit, toUnit);
@@ -129,10 +176,6 @@ async function performConversion(type, value, fromUnit, toUnit) {
         return "Invalid conversion type. Please specify either 'currency' or 'unit'.";
     }
 }
-
-// Example usage:
-//performConversion('currency', 100, 'USD', 'EUR').then(response => console.log(response)); // Currency conversion
-//console.log(performConversion('unit', 100, 'meters', 'kilometers')); // Unit conversion
 // Utility: Speak text
 const speakMessage = (message) => {
   const synth = window.speechSynthesis;
@@ -291,21 +334,24 @@ function takeCommand(message) {
   ) {
     processInput(message);
   } else if (message.includes("convert")) {
-    // Example: Extracting details from the message
-    // This is just a placeholder for extracting conversion details
-    const conversionDetails = extractConversionDetails(message); // Implement this function based on how you're structuring the message.
+    // First, check if the message provides all the necessary details, 
+    // if not, ask for more details.
+    const conversionDetails = extractConversionDetails(message); // Function to extract details
 
     if (conversionDetails) {
         const { type, value, fromUnit, toUnit } = conversionDetails;
+        
+        // Call the performConversion function
         performConversion(type, value, fromUnit, toUnit)
             .then(response => {
-                typeMessage(response);
+                typeMessage(response); // Send the response to the chatbot
             })
             .catch(error => {
                 typeMessage("Sorry, there was an error with the conversion.");
             });
     } else {
-        typeMessage("Sorry, I couldn't understand the conversion request.");
+        // If the necessary details are not found, prompt the user for more information
+        typeMessage("Please provide the conversion details in the following format: 'convert 100 meters to kilometers' or 'convert 50 USD to EUR'.");
     }
 } else {
     typeMessage("Sorry, I couldn't understand that. Please try something else.");
