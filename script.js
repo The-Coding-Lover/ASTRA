@@ -71,6 +71,69 @@ const helpMe = () => {
   return help[Math.floor(Math.random() * help.length)];
 };
 
+//Utility: Manual unit conversion
+function convertUnits(value, fromUnit, toUnit) {
+    // Length conversion (e.g., meters to kilometers, inches to centimeters)
+    const lengthConversions = {
+        "metersToKilometers": value => value / 1000,
+        "kilometersToMeters": value => value * 1000,
+        "inchesToCentimeters": value => value * 2.54,
+        "centimetersToInches": value => value / 2.54
+    };
+
+    // Temperature conversion (Celsius to Fahrenheit, and vice versa)
+    const temperatureConversions = {
+        "celsiusToFahrenheit": value => (value * 9/5) + 32,
+        "fahrenheitToCelsius": value => (value - 32) * 5/9
+    };
+
+    let conversionResult;
+
+    // Handle length conversions
+    if (fromUnit === "meters" && toUnit === "kilometers") {
+        conversionResult = lengthConversions.metersToKilometers(value);
+    } else if (fromUnit === "kilometers" && toUnit === "meters") {
+        conversionResult = lengthConversions.kilometersToMeters(value);
+    } else if (fromUnit === "inches" && toUnit === "centimeters") {
+        conversionResult = lengthConversions.inchesToCentimeters(value);
+    } else if (fromUnit === "centimeters" && toUnit === "inches") {
+        conversionResult = lengthConversions.centimetersToInches(value);
+    }
+
+    // Handle temperature conversions
+    if (fromUnit === "Celsius" && toUnit === "Fahrenheit") {
+        conversionResult = temperatureConversions.celsiusToFahrenheit(value);
+    } else if (fromUnit === "Fahrenheit" && toUnit === "Celsius") {
+        conversionResult = temperatureConversions.fahrenheitToCelsius(value);
+    }
+
+    if (conversionResult !== undefined) {
+        return `${value} ${fromUnit} is equal to ${conversionResult.toFixed(2)} ${toUnit}.`;
+    } else {
+        return "Sorry, I couldn't perform the conversion. Please check the units and try again.";
+    }
+}
+
+// Example usage:
+//console.log(convertUnits(100, 'meters', 'kilometers'));  // 100 meters to kilometers
+//console.log(convertUnits(32, 'Fahrenheit', 'Celsius')); // 32 Fahrenheit to Celsius
+
+async function performConversion(type, value, fromUnit, toUnit) {
+    if (type === 'currency') {
+        // Call the currency conversion function
+        return await convertCurrency(value, fromUnit, toUnit);
+    } else if (type === 'unit') {
+        // Call the unit conversion function
+        return convertUnits(value, fromUnit, toUnit);
+    } else {
+        return "Invalid conversion type. Please specify either 'currency' or 'unit'.";
+    }
+}
+
+// Example usage:
+//performConversion('currency', 100, 'USD', 'EUR').then(response => console.log(response)); // Currency conversion
+//console.log(performConversion('unit', 100, 'meters', 'kilometers')); // Unit conversion
+
 // Utility: Speak text
 const speakMessage = (message) => {
   const synth = window.speechSynthesis;
@@ -228,6 +291,10 @@ function takeCommand(message) {
     message.includes("calculate")
   ) {
     processInput(message);
+  } else if (
+    message.include("convert")
+  ) {
+    performConversion(message);
   } else {
     typeMessage("Sorry, I couldn't understand that. Please try something else.");
   }
