@@ -15,6 +15,33 @@ const thankYouReply = () => {
   return responses[Math.floor(Math.random() * responses.length)];
 };
 
+// Utility: Random jokes
+const randomjokes = () => {
+  const jokes = [
+    "Why don’t scientists trust atoms? Because they make up everything!",
+    "Why did the scarecrow win an award? Because he was outstanding in his field!",
+    "Why don’t skeletons fight each other? They don’t have the guts.",
+    "What do you call fake spaghetti? An impasta!",
+    "Why did the bicycle fall over? Because it was two-tired.",
+    "What did one wall say to the other wall? I’ll meet you at the corner.",
+    "Why can’t your nose be 12 inches long? Because then it would be a foot!",
+    "Why did the math book look sad? Because it had too many problems.",
+    "How do you organize a space party? You planet.",
+    "Why did the coffee file a police report? It got mugged.",
+    "What do you call cheese that isn’t yours? Nacho cheese.",
+    "Why don’t oysters share their pearls? Because they’re shellfish.",
+    "How does a penguin build its house? Igloos it together.",
+    "Why did the tomato turn red? Because it saw the salad dressing.",
+    "What did the janitor say when he jumped out of the closet? Supplies!",
+    "Why did the cookie go to the hospital? Because it felt crummy.",
+    "Why can’t you hear a pterodactyl go to the bathroom? Because the “P” is silent.",
+    "Why did the golfer bring two pairs of pants? In case he got a hole in one.",
+    "What do you call a belt made of watches? A waist of time.",
+    "What did one ocean say to the other ocean? Nothing, they just waved."
+  ];
+  return jokes[Math.floor(Math.random() * jokes.length)];
+};
+
 // Utility: Speak text
 const speakMessage = (message) => {
   const synth = window.speechSynthesis;
@@ -97,7 +124,10 @@ function handleUserInput() {
 
 // Command logic
 function takeCommand(message) {
-  if (message.includes("hello") || message.includes("hey")) {
+  if (message.includes("hello") ||
+      message.includes("hey") ||
+      message.includes("hi") ||
+      message.includes("listen")) {
     typeMessage("Hello Sir, how can I help you?");
   } else if (message.includes("time")) {
     const time = new Date().toLocaleTimeString();
@@ -107,8 +137,10 @@ function takeCommand(message) {
     typeMessage("Today's date is " + date);
   } else if (message.includes("your name")) {
     typeMessage("My name is Astra, your virtual assistant.");
-  } else if (message.includes("who am i")) {
-    typeMessage("You are my Malik");
+  } else if (
+    message.includes("who am i") ||
+    message.includes("who i am")) {
+    typeMessage("You are my Boss");
   } else if (
     message.includes("thank you") ||
     message.includes("thanks") ||
@@ -117,7 +149,15 @@ function takeCommand(message) {
   ) {
     const reply = thankYouReply();
     typeMessage(reply);
-  }  else if (message.includes("open youtube")) {
+  }  else if (
+    message.includes("tell me a joke") ||
+    message.includes("jokes") ||
+    message.includes("entertain me") ||
+    message.includes("make me laugh")
+  ) {
+    const jokeReply = randomjoke();
+    typeMessage(jokeReply);
+  } else if (message.includes("open youtube")) {
     window.open("https://youtube.com", "_blank");
     typeMessage("Opening Youtube...");
   } else if (message.includes("open whatsapp")) {
