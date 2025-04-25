@@ -120,8 +120,8 @@ function convertUnits(value, fromUnit, toUnit) {
 
 async function performConversion(type, value, fromUnit, toUnit) {
     if (type === 'currency') {
-        // Call the currency conversion function
-        return await convertCurrency(value, fromUnit, toUnit);
+        // Call the currency conversion function (assuming it's asynchronous)
+        return await convertCurrency(value, fromUnit, toUnit); // Ensure you have this function defined elsewhere.
     } else if (type === 'unit') {
         // Call the unit conversion function
         return convertUnits(value, fromUnit, toUnit);
@@ -133,7 +133,6 @@ async function performConversion(type, value, fromUnit, toUnit) {
 // Example usage:
 //performConversion('currency', 100, 'USD', 'EUR').then(response => console.log(response)); // Currency conversion
 //console.log(performConversion('unit', 100, 'meters', 'kilometers')); // Unit conversion
-
 // Utility: Speak text
 const speakMessage = (message) => {
   const synth = window.speechSynthesis;
@@ -291,11 +290,24 @@ function takeCommand(message) {
     message.includes("calculate")
   ) {
     processInput(message);
-  } else if (
-    message.include("convert")
-  ) {
-    performConversion(message);
-  } else {
+  } else if (message.includes("convert")) {
+    // Example: Extracting details from the message
+    // This is just a placeholder for extracting conversion details
+    const conversionDetails = extractConversionDetails(message); // Implement this function based on how you're structuring the message.
+
+    if (conversionDetails) {
+        const { type, value, fromUnit, toUnit } = conversionDetails;
+        performConversion(type, value, fromUnit, toUnit)
+            .then(response => {
+                typeMessage(response);
+            })
+            .catch(error => {
+                typeMessage("Sorry, there was an error with the conversion.");
+            });
+    } else {
+        typeMessage("Sorry, I couldn't understand the conversion request.");
+    }
+} else {
     typeMessage("Sorry, I couldn't understand that. Please try something else.");
   }
 }
