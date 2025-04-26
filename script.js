@@ -421,7 +421,7 @@ function takeCommand(message) {
 } else if (
   message.includes("translate")
 ) {
-  handleTranslationCommand(message);
+  await handleTranslationCommand(message);
 }else {
     typeMessage("Sorry, I couldn't understand that. Please try something else.");
   }
