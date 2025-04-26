@@ -179,60 +179,60 @@ async function performConversion(type, value, fromUnit, toUnit) {
 
 // Utility: Translate Language
 // Language code mapping
-const languageCodes = {
-  english: 'en',
-  spanish: 'es',
-  french: 'fr',
-  german: 'de',
-  hindi: 'hi',
-  japanese: 'ja',
-  chinese: 'zh',
-  arabic: 'ar',
-  italian: 'it',
-  russian: 'ru',
-  portuguese: 'pt'
-};
+// const languageCodes = {
+//   english: 'en',
+//   spanish: 'es',
+//   french: 'fr',
+//   german: 'de',
+//   hindi: 'hi',
+//   japanese: 'ja',
+//   chinese: 'zh',
+//   arabic: 'ar',
+//   italian: 'it',
+//   russian: 'ru',
+//   portuguese: 'pt'
+// };
 
-// Translation handler function using typeMessage()
-async function processTranslation(message) {
-  const match = message.match(/translate ['"](.+?)['"] to (\w+)/i);
-  if (!match) {
-    typeMessage("Please say something like: Translate 'How are you' to Hindi.");
-    return;
-  }
+// // Translation handler function using typeMessage()
+// async function processTranslation(message) {
+//   const match = message.match(/translate ['"](.+?)['"] to (\w+)/i);
+//   if (!match) {
+//     typeMessage("Please say something like: Translate 'How are you' to Hindi.");
+//     return;
+//   }
 
-  const phrase = match[1];
-  const targetLang = match[2].toLowerCase();
-  const targetCode = languageCodes[targetLang];
+//   const phrase = match[1];
+//   const targetLang = match[2].toLowerCase();
+//   const targetCode = languageCodes[targetLang];
 
-  if (!targetCode) {
-    typeMessage(`Sorry, I don't support the language "${targetLang}" yet.`);
-    return;
-  }
+//   if (!targetCode) {
+//     typeMessage(`Sorry, I don't support the language "${targetLang}" yet.`);
+//     return;
+//   }
 
-  try {
-    const response = await fetch('https://libretranslate.de/translate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        q: phrase,
-        source: 'auto',
-        target: targetCode,
-        format: 'text'
-      })
-    });
+//   try {
+//     const response = await fetch('https://libretranslate.de/translate', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({
+//         q: phrase,
+//         source: 'auto',
+//         target: targetCode,
+//         format: 'text'
+//       })
+//     });
 
-    const data = await response.json();
-    const translatedText = data.translatedText;
+//     const data = await response.json();
+//     const translatedText = data.translatedText;
 
-    addChatMessage("You", message);
-    typeMessage(translatedText);
+//     addChatMessage("You", message);
+//     typeMessage(translatedText);
 
-  } catch (error) {
-    console.error("Translation error:", error);
-    typeMessage("Sorry, I couldn't translate that.");
-  }
-}
+//   } catch (error) {
+//     console.error("Translation error:", error);
+//     typeMessage("Sorry, I couldn't translate that.");
+//   }
+// }
 
 // Utility: Speak text
 const speakMessage = (message) => {
@@ -410,10 +410,6 @@ function takeCommand(message) {
     } else {
         // If the necessary details are not found, prompt the user for more information
         typeMessage("Please provide the conversion details in the following format: 'convert 100 meters to kilometers' or 'convert 50 USD to EUR'.");
-} else if (
-    message.toLowerCase().includes("translate")) 
-  {
-  processTranslation(message);
 } else {
     typeMessage("Sorry, I couldn't understand that. Please try something else.");
   }
