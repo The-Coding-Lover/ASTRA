@@ -193,18 +193,11 @@ const languageCodes = {
   portuguese: 'pt'
 };
 
-// Speak function
-function speak(text) {
-  const speech = new SpeechSynthesisUtterance(text);
-  speech.lang = 'en';
-  window.speechSynthesis.speak(speech);
-}
-
-// Translator with auto-detect source language
-async function handleTranslationCommand(userInput) {
-  const match = userInput.match(/translate ['"](.+?)['"] to (\w+)/i);
+// Translation handler function using typeMessage()
+async function processTranslation(message) {
+  const match = message.match(/translate ['"](.+?)['"] to (\w+)/i);
   if (!match) {
-    speak("Please say something like: Translate 'How are you' to Hindi.");
+    typeMessage("Please say something like: Translate 'How are you' to Hindi.");
     return;
   }
 
@@ -213,7 +206,7 @@ async function handleTranslationCommand(userInput) {
   const targetCode = languageCodes[targetLang];
 
   if (!targetCode) {
-    speak(`Sorry, I don't support the language ${targetLang} yet.`);
+    typeMessage(`Sorry, I don't support the language "${targetLang}" yet.`);
     return;
   }
 
@@ -223,7 +216,7 @@ async function handleTranslationCommand(userInput) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         q: phrase,
-        source: 'auto',         // auto-detect source language
+        source: 'auto',
         target: targetCode,
         format: 'text'
       })
@@ -232,13 +225,12 @@ async function handleTranslationCommand(userInput) {
     const data = await response.json();
     const translatedText = data.translatedText;
 
-    addChatMessage("You", userInput);
-    addChatMessage("Astra", translatedText);
-    speak(translatedText);
+    addChatMessage("You", message);
+    typeMessage(translatedText);
 
   } catch (error) {
     console.error("Translation error:", error);
-    speak("Sorry, I couldn't translate that.");
+    typeMessage("Sorry, I couldn't translate that.");
   }
 }
 
@@ -419,10 +411,10 @@ function takeCommand(message) {
         // If the necessary details are not found, prompt the user for more information
         typeMessage("Please provide the conversion details in the following format: 'convert 100 meters to kilometers' or 'convert 50 USD to EUR'.");
 } else if (
-  message.includes("translate")
-) {
-  await handleTranslationCommand(message);
-}else {
+    message.toLowerCase().includes("translate")) 
+  {
+  processTranslation(message);
+} else {
     typeMessage("Sorry, I couldn't understand that. Please try something else.");
   }
 }
