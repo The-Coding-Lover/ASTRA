@@ -176,6 +176,72 @@ async function performConversion(type, value, fromUnit, toUnit) {
         return "Invalid conversion type. Please specify either 'currency' or 'unit'.";
     }
 }
+
+// Utility: Translate Language
+// Language code mapping
+const languageCodes = {
+  english: 'en',
+  spanish: 'es',
+  french: 'fr',
+  german: 'de',
+  hindi: 'hi',
+  japanese: 'ja',
+  chinese: 'zh',
+  arabic: 'ar',
+  italian: 'it',
+  russian: 'ru',
+  portuguese: 'pt'
+};
+
+// Speak function
+function speak(text) {
+  const speech = new SpeechSynthesisUtterance(text);
+  speech.lang = 'en';
+  window.speechSynthesis.speak(speech);
+}
+
+// Translator with auto-detect source language
+async function handleTranslationCommand(userInput) {
+  const match = userInput.match(/translate ['"](.+?)['"] to (\w+)/i);
+  if (!match) {
+    speak("Please say something like: Translate 'How are you' to Hindi.");
+    return;
+  }
+
+  const phrase = match[1];
+  const targetLang = match[2].toLowerCase();
+  const targetCode = languageCodes[targetLang];
+
+  if (!targetCode) {
+    speak(`Sorry, I don't support the language ${targetLang} yet.`);
+    return;
+  }
+
+  try {
+    const response = await fetch('https://libretranslate.de/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        q: phrase,
+        source: 'auto',         // auto-detect source language
+        target: targetCode,
+        format: 'text'
+      })
+    });
+
+    const data = await response.json();
+    const translatedText = data.translatedText;
+
+    addChatMessage("You", userInput);
+    addChatMessage("Astra", translatedText);
+    speak(translatedText);
+
+  } catch (error) {
+    console.error("Translation error:", error);
+    speak("Sorry, I couldn't translate that.");
+  }
+}
+
 // Utility: Speak text
 const speakMessage = (message) => {
   const synth = window.speechSynthesis;
@@ -352,8 +418,11 @@ function takeCommand(message) {
     } else {
         // If the necessary details are not found, prompt the user for more information
         typeMessage("Please provide the conversion details in the following format: 'convert 100 meters to kilometers' or 'convert 50 USD to EUR'.");
-    }
-} else {
+} else if (
+  message.includes("translate")
+) {
+  handleTranslationCommand(message);
+}else {
     typeMessage("Sorry, I couldn't understand that. Please try something else.");
   }
 }
