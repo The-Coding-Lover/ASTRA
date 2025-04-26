@@ -341,7 +341,7 @@ function takeCommand(message) {
   ) {
     const reply = thankYouReply();
     typeMessage(reply);
-  }  else if (
+  } else if (
     message.includes("tell me a joke") ||
     message.includes("jokes") ||
     message.includes("entertain me") ||
